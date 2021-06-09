@@ -1,0 +1,12 @@
+Package: pgSupertest
+Type: Package
+Title: Simple UPstream Kinase EnRichment
+Imports: tidyverse, data.table, globaltest
+Version: 0.1.1
+Author: Rik de Wijn
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: Upstream kinase enrichment using global test for peptide sets
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
