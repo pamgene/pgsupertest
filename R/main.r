@@ -26,6 +26,7 @@ scoreIviv = function(db, score){
 #' @export
 scorePNet = function(db, ranks, scores){
   db %>%
+    filter(Database == "PhosphoNET") %>%
     mutate(
       s  = case_when(
         Kinase_Rank > ranks[2] ~ scores[3],
