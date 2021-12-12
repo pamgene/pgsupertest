@@ -65,7 +65,6 @@ combinedScores = function(dblist, minscore){
   db.all %>%
     left_join(dbc, by = c("Kinase_Name", "ID")) %>%
     mutate(sc.final = case_when(
-      is.na(sc) ~ minscore,
       sc < minscore ~ minscore,
       TRUE ~ sc))
 }
