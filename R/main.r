@@ -15,6 +15,15 @@ TableS1 = function(){
   df = read.delim(system.file("extdata", "TableS1 Kinases in Kinome Render.txt", package = "pgSupertest"))
 }
 
+#' @export
+flagOutOfGroup = function(db){
+  upstreamDb() %>%
+    left_join(TableS1(), by = c(Kinase_Name = "KR_Name")) %>%
+    mutate(outOfGroup = case_when(PepProtein_Residue == "Y"  & GroupName != "TK" ~ TRUE,
+                                  PepProtein_Residue != "Y"  & GroupName == "TK" ~ TRUE,
+                                  TRUE ~ FALSE))
+}
+
 
 #' @export
 scoreIviv = function(db, score){

@@ -2,6 +2,7 @@
 
 export(TableS1)
 export(combinedScores)
+export(flagOutOfGroup)
 export(gdelta)
 export(gtest)
 export(normalizeScores)
