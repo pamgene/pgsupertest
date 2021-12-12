@@ -24,16 +24,16 @@ flagOutOfGroup = function(db){
                                   TRUE ~ FALSE))
 }
 
-
 #' @export
-scoreIviv = function(db, score){
+scoreIviv = function(db, score, outOfGroup_score = NULL){
   db %>%
     filter(Database == "iviv") %>%
-    mutate(s = score)
+    mutate(s = score) %>%
+    mutateOutOfGroup(outOfGroup_score)
 }
 
 #' @export
-scorePNet = function(db, ranks, scores){
+scorePNet = function(db, ranks, scores, outOfGroup_score = NULL){
   db %>%
     filter(Database == "PhosphoNET") %>%
     mutate(
@@ -41,7 +41,16 @@ scorePNet = function(db, ranks, scores){
         Kinase_Rank > ranks[2] ~ scores[3],
         Kinase_Rank > ranks[1] ~ scores[2],
         TRUE ~ scores[1])
-    )
+    ) %>%
+    mutateOutOfGroup(outOfGroup_score)
+}
+
+#' @export
+scoreNoMatch = function(db, score, outOfGroup_score = NULL){
+  db = db %>%
+    mutate(s = case_when(is.nan(s) ~ score,
+                         TRUE ~ s)) %>%
+    mutateOutOfGroup(outOfGroup_score)
 }
 
 #' @export
@@ -68,6 +77,15 @@ normalizeScores = function(db){
     left_join(sumdf, by = "ID") %>%
     group_by(ID) %>%
     mutate(sc.nor = sc.final/sumsc)
+}
+
+mutateOutOfGroup = function(db, oogs = NULL){
+  if(!is.null(oogs)){
+    db = db %>%
+      mutate(s = case_when(outOfGroup ~ oogs,
+                           TRUE ~ s))
+  }
+  db
 }
 
 #' @import data.table
