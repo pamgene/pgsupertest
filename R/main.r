@@ -54,8 +54,8 @@ scoreNoMatch = function(db, score, outOfGroup_score = NULL){
 }
 
 #' @export
-combinedScores = function(dblist, minscore){
-  dbc = bind_rows(dblist) %>%
+combinedScores = function(db, minscore){
+  dbc = db %>%
     group_by(Kinase_Name, ID) %>%
     summarise(sc = 1-prod(1-s))
 
