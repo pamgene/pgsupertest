@@ -56,6 +56,8 @@ scoreNoMatch = function(db, score, outOfGroup_score = NULL){
 #' @export
 combinedScores = function(db, minscore){
   dbc = db %>%
+    mutate(Kinase_Name = Kinase_Name %>% as.factor,
+           ID = ID %>% as.factor) %>%
     group_by(Kinase_Name, ID) %>%
     summarise(sc = 1-prod(1-s))
 
