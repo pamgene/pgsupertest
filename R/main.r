@@ -59,7 +59,7 @@ combinedScores = function(db, minscore){
     mutate(Kinase_Name = Kinase_Name %>% as.factor,
            ID = ID %>% as.factor) %>%
     group_by(Kinase_Name, ID) %>%
-    summarise(s = 1-prod(1-s))
+    summarise(s = 1-prod(1-s), outOfGroup = all(outOfGroup))
 
   db.all = expand.grid(levels(droplevels(dbc$Kinase_Name)), levels(droplevels(dbc$ID)) )
   colnames(db.all) = c("Kinase_Name", "ID")
