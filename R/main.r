@@ -59,25 +59,25 @@ combinedScores = function(db, minscore){
     mutate(Kinase_Name = Kinase_Name %>% as.factor,
            ID = ID %>% as.factor) %>%
     group_by(Kinase_Name, ID) %>%
-    summarise(sc = 1-prod(1-s))
+    summarise(s = 1-prod(1-s))
 
   db.all = expand.grid(levels(droplevels(dbc$Kinase_Name)), levels(droplevels(dbc$ID)) )
   colnames(db.all) = c("Kinase_Name", "ID")
 
   db.all %>%
     left_join(dbc, by = c("Kinase_Name", "ID")) %>%
-    mutate(sc.final = case_when(
-      sc < minscore ~ minscore,
-      TRUE ~ sc))
+    mutate(s = case_when(
+      s < minscore ~ minscore,
+      TRUE ~ s))
 }
 
 #' @export
 normalizeScores = function(db){
-  sumdf = db %>% group_by(ID) %>% summarise(sumsc = sum(sc.final))
+  sumdf = db %>% group_by(ID) %>% summarise(sumsc = sum(s))
   db %>%
     left_join(sumdf, by = "ID") %>%
     group_by(ID) %>%
-    mutate(sc.nor = sc.final/sumsc)
+    mutate(sc.nor = s/sumsc)
 }
 
 mutateOutOfGroup = function(db, oogs = NULL){
