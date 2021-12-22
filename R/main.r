@@ -56,6 +56,7 @@ scoreNoMatch = function(db, score, outOfGroup_score = NULL){
     mutateOutOfGroup(outOfGroup_score)
 }
 
+#' @import reshape2
 #' @export
 combinedScores = function(db, minscore, outOfGroupScore = 0){
   dbc = db %>%

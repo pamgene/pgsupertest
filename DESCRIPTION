@@ -1,8 +1,8 @@
 Package: pgSupertest
 Type: Package
 Title: Simple UPstream Kinase EnRichment and upstream kinase scoring for peptide sets
-Imports: tidyverse, data.table, globaltest
-Version: 0.10
+Imports: tidyverse, data.table, globaltest, reshape2
+Version: 0.11
 Author: Rik de Wijn
 Maintainer: Rik de Wijn <rdwijn@pamgene.com>
 Description: Upstream kinase scoring for peptide sets
