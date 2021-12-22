@@ -17,7 +17,7 @@ TableS1 = function(){
 
 #' @export
 flagOutOfGroup = function(db){
-  upstreamDb() %>%
+    db %>%
     left_join(TableS1(), by = c(Kinase_Name = "KR_Name")) %>%
     mutate(outOfGroup = case_when(PepProtein_Residue == "Y"  & GroupName != "TK" ~ TRUE,
                                   PepProtein_Residue != "Y"  & GroupName == "TK" ~ TRUE,
@@ -27,6 +27,7 @@ flagOutOfGroup = function(db){
 #' @export
 scoreIviv = function(db, score, outOfGroup_score = NULL){
   db %>%
+    flagOutOfGroup() %>%
     filter(Database == "iviv") %>%
     mutate(s = score) %>%
     mutateOutOfGroup(outOfGroup_score)
@@ -35,6 +36,7 @@ scoreIviv = function(db, score, outOfGroup_score = NULL){
 #' @export
 scorePNet = function(db, ranks, scores, outOfGroup_score = NULL){
   db %>%
+    flagOutOfGroup() %>%
     filter(Database == "PhosphoNET") %>%
     mutate(
       s  = case_when(
@@ -48,27 +50,44 @@ scorePNet = function(db, ranks, scores, outOfGroup_score = NULL){
 #' @export
 scoreNoMatch = function(db, score, outOfGroup_score = NULL){
   db = db %>%
+    flagOutOfGroup() %>%
     mutate(s = case_when(is.nan(s) ~ score,
                          TRUE ~ s)) %>%
     mutateOutOfGroup(outOfGroup_score)
 }
 
 #' @export
-combinedScores = function(db, minscore){
+combinedScores = function(db, minscore, outOfGroupScore = 0){
   dbc = db %>%
     mutate(Kinase_Name = Kinase_Name %>% as.factor,
            ID = ID %>% as.factor) %>%
     group_by(Kinase_Name, ID) %>%
     summarise(s = 1-prod(1-s), outOfGroup = all(outOfGroup))
 
+  Koog  = dbc %>%
+    reshape2::dcast(ID ~ Kinase_Name, value.var = "outOfGroup") %>%
+    select(-ID) %>%
+    apply(2, any, na.rm = TRUE) %>%
+    as.data.frame() %>%
+    mutate(Kinase_Name = rownames(.))
+
+  Koog = Koog %>%
+    mutate(Kinase_Name = rownames(Koog)) %>%
+    select(Kinase_Name, oog = ".")
+
   db.all = expand.grid(levels(droplevels(dbc$Kinase_Name)), levels(droplevels(dbc$ID)) )
   colnames(db.all) = c("Kinase_Name", "ID")
 
   db.all %>%
     left_join(dbc, by = c("Kinase_Name", "ID")) %>%
+    left_join(Koog, by = "Kinase_Name") %>%
     mutate(s = case_when(
       s < minscore ~ minscore,
-      TRUE ~ s))
+      s >= minscore  ~ s,
+      is.na(s) & !oog ~ minscore,
+      is.na(s) & oog ~ outOfGroupScore)) %>%
+    select(Kinase_Name, ID, s, oog)
+
 }
 
 #' @export
