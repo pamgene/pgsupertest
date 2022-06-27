@@ -5,8 +5,9 @@ library(tidyverse)
 al = read.delim("86402 Array Layout.txt")
 
 getIDTable <- function(df){
-  df <- df %>%
-    select(ID) %>%
+
+    df %>%
+    dplyr::select(ID) %>%
     mutate(.ri = 1:n(), .ci = 1)
 }
 
@@ -30,7 +31,7 @@ scores = function(mappings){
   dbp = mappings %>%
     scorePNet(ranks = c(pnet_bp1, pnet_bp2), scores = c(p_pnet0, p_pnet1, p_pnet2), pOutOfGroup)
 
-  browser()
+
 
   result =  dbi %>%
     bind_rows(dbp) %>%
@@ -70,7 +71,8 @@ kinase.table = csdata %>%
 
 
 
-id.table = getIDTable() %>%
+id.table = al %>%
+  getIDTable() %>%
   select(.ri, ID) %>%
   distinct(ID, .keep_all = TRUE)
 
