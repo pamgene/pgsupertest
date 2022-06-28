@@ -5,7 +5,7 @@ library(globaltest)
 #' @import tidyverse data.table globaltest
 #' @export
 upstreamDb = function(){
-  load(system.file("extdata", "220512-86402-86412-87102_UpstreamDb.RData" , package = "pgSupertest"))
+  load(system.file("extdata", "220512-86402-86412-87102_UpstreamDb.Rdata" , package = "pgSupertest"))
   UpstreamDatabase %>%
     ungroup()
 }

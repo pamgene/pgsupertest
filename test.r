@@ -82,3 +82,5 @@ result = csdata %>%
 
 result = result %>%
   select(.ri, .ci, ID, s, sc.nor)
+
+db = upstreamDb()
