@@ -1,6 +1,6 @@
 rm(list = ls())
 library(pgSupertest)
-library(tidyverse)
+library(dplyr)
 
 al = read.delim("86402 Array Layout.txt")
 
