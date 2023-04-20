@@ -25,12 +25,19 @@ flagOutOfGroup = function(db){
 }
 
 #' @export
-scoreIviv = function(db, score, outOfGroup_score = NULL){
-  db %>%
+scoreIviv = function(db, score, outOfGroup_score = NULL, scoreIdenticalOnce = TRUE){
+  dbout = db %>%
     flagOutOfGroup() %>%
     filter(Database == "iviv") %>%
     mutate(s = score) %>%
     mutateOutOfGroup(outOfGroup_score)
+
+  if(scoreIdenticalOnce){
+    # identical peptide - phosphosite - kinase relations that are found in multiple iviv databases are scored only once
+    dbout = dbout %>%
+      distinct(ID, PepProtein_PhosLink, Kinase_Name, .keep_all = TRUE )
+  }
+  dbout
 }
 
 #' @export
